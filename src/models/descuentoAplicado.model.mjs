@@ -10,18 +10,10 @@ export default (sequelize, DataTypes) => {
      facturaId: {
        type: DataTypes.INTEGER,
        allowNull: false,
-       references: {
-         model: 'Factura',
-         key: 'id'
-       }
      },
      descuentoId: {
        type: DataTypes.INTEGER,
        allowNull: false,
-       references: {
-         model: 'Descuento',
-         key: 'id'
-       }
      },
      montoDescuento: {
        type: DataTypes.DECIMAL(10, 2),
