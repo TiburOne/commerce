@@ -4,7 +4,7 @@ import { productoController } from '../controllers/producto.controller.mjs'; // 
 const router = express.Router();
 
 router.post('/', productoController.crearProducto);
-router.get('/', productoController.listarProductos);
+router.get('/', productoController.obtenerProductos);
 router.put('/:id', productoController.actualizarProducto);
 router.delete('/:id', productoController.eliminarProducto);
 

@@ -25,12 +25,17 @@ export default  (sequelize, DataTypes) => {
     tableName: 'Productos'
   });
 
-//   Producto.associate = function(models) {
-//    Producto.belongsTo(models.Categoria, {
-//      foreignKey: 'categoriaId',
-//      as: 'categoria'
-//    });  
-//  };
+  Producto.associate = function(models) {
+    Producto.belongsTo(models.Categoria, {
+      foreignKey: 'categoriaId',
+      as: 'categoria'
+    });
+    
+    Producto.hasMany(models.ProductoImpuesto, {
+      foreignKey: 'productoId',
+      as: 'impuestos'
+    });
+ };
 
   return Producto;
 };

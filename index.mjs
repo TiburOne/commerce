@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 await cargarRutas(routesDirectory);
 
 // Sincroniza la base de datos y luego inicia el servidors
-db.sequelize.sync({ }).then(() => {
+db.sequelize.sync({ force: true}).then(() => {
    app.listen(port, () => {
      console.log(`Listening on port ${port}`);
    });

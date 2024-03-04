@@ -3,7 +3,7 @@ import db from './../models/loader.mjs'; // Asegúrate de ajustar la ruta al arc
 const { Categoria } = db;
 
 export const categoriaController = {
-  crearCategoria: async (req, res) => {º
+  crearCategoria: async (req, res) => {
     try {
       const categoria = await Categoria.create(req.body);
       res.status(201).send(categoria);

@@ -7,7 +7,7 @@ export default (sequelize, DataTypes) => {
        primaryKey: true,
        autoIncrement: true
      },
-     facturaId: {
+     OrdenId: {
        type: DataTypes.INTEGER,
        allowNull: false
      },
@@ -28,9 +28,9 @@ export default (sequelize, DataTypes) => {
    });
  
    Pago.associate = function(models) {
-     Pago.belongsTo(models.Factura, {
-       foreignKey: 'facturaId',
-       as: 'factura'
+     Pago.belongsTo(models.Orden, {
+       foreignKey: 'OrdenId',
+       as: 'Orden'
      });
      Pago.belongsTo(models.TipoPago, {
        foreignKey: 'tipoPagoId',

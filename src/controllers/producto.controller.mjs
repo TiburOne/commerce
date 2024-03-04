@@ -48,5 +48,44 @@ export const productoController = {
     } catch (error) {
       res.status(400).send(error);
     }
-  }
+  },
+
+  obtenerProductos: async (req, res) => {
+   try {
+       const { ids } = req.query; // Suponiendo que los IDs vienen como un string de query params, por ejemplo: ?ids=1,2,3
+       const opciones = req.query;
+
+       let consultaOpciones = {};
+       if (ids) {
+           const arrayIds = ids.split(',').map(id => parseInt(id));
+           consultaOpciones.where = { id: arrayIds };
+       }
+
+       if (opciones.incluirCategoria === 'true') {
+           consultaOpciones.include = consultaOpciones.include || [];
+           consultaOpciones.include.push({
+               association: 'categoria'
+           });
+       }
+
+       if (opciones.incluirImpuestos === 'true') {
+           consultaOpciones.include = consultaOpciones.include || [];
+           consultaOpciones.include.push({
+               association: 'impuestos'
+           });
+       }
+
+       const productos = await Producto.findAll(consultaOpciones);
+
+       if (!productos || productos.length === 0) {
+           return res.status(404).send({ message: 'Productos no encontrados.' });
+       }
+
+       res.status(200).send(productos);
+   } catch (error) {
+       console.error(error);
+       res.status(500).send({ message: 'Error al obtener los productos.' });
+   }
+}
+
 };
