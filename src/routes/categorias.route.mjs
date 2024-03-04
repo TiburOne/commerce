@@ -1,5 +1,5 @@
 import express from 'express';
-import { categoriaController } from './../controllers/categoria.controller.mjs'; // Ajusta la importación según la ubicación de tus controladores
+import { categoriaController } from '../controllers/categoria.controller.mjs'; // Ajusta la importación según la ubicación de tus controladores
 
 const router = express.Router();
 
