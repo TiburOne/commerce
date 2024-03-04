@@ -11,13 +11,22 @@ export default (sequelize, DataTypes) => {
        type: DataTypes.STRING,
        allowNull: false
      },
-     porcentaje: {
-       type: DataTypes.DECIMAL(5, 2), // Ejemplo: 21.00 para un 21%
+     porcentaje_sugerido: {
+       type: DataTypes.DECIMAL(5, 2),
        allowNull: false
      }
    }, {
      tableName: 'Impuestos'
    });
+ 
+   Impuesto.associate = function(models) {
+     Impuesto.belongsToMany(models.Producto, {
+       through: 'ProductoImpuesto',
+       as: 'productos',
+       foreignKey: 'impuestoId',
+       otherKey: 'productoId'
+     });
+   };
  
    return Impuesto;
  };
