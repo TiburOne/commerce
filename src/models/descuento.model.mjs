@@ -41,8 +41,15 @@ export default (sequelize, DataTypes) => {
    });
  
    Descuento.associate = function(models) {
-     // Asociaciones aquí si son necesarias
-   };
+    Descuento.belongsTo(models.Producto, {
+      foreignKey: 'productoId',
+      as: 'producto'
+    });
+    Descuento.belongsTo(models.Cliente, {
+      foreignKey: 'clienteId',
+      as: 'cliente'
+    });
+  };
  
    return Descuento;
  };

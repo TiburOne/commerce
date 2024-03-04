@@ -41,6 +41,11 @@ export default (sequelize, DataTypes) => {
        foreignKey: 'OrdenId',
        as: 'detalles'
      });
+
+     Orden.hasMany(models.Pago, {
+      foreignKey: 'OrdenId',
+      as: 'pagos'
+    });
    };
  
    return Orden;
