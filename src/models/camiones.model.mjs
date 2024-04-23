@@ -29,9 +29,9 @@ export default (sequelize, DataTypes) => {
    );
  
    Camiones.associate = function(models) {
-     Camiones.belongsTo(models.Transportista, { foreignKey: "id_transportista" });
-     Camiones.belongsTo(models.TipoCamion, { foreignKey: "id_tipo_camion" });
-     Camiones.hasMany(models.ViajeComun, { foreignKey: "id_camion" });
+     Camiones.belongsTo(models.Transportista, { foreignKey: "id_transportista", as: 'transportista' });
+     Camiones.belongsTo(models.TipoCamion, { foreignKey: "id_tipo_camion", as: 'tipo_camion' });
+     Camiones.hasMany(models.ViajeComun, { foreignKey: "id_camion", as: 'camion' });
    };
  
    return Camiones;
