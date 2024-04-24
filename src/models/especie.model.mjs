@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
-   const Especies = sequelize.define(
-     "Especies",
+   const Especie = sequelize.define(
+     "Especie",
      {
        id: {
          type: DataTypes.INTEGER,
@@ -17,10 +17,10 @@ export default (sequelize, DataTypes) => {
      }
    );
  
-   Especies.associate = function(models) {
-     Especies.hasMany(models.ViajeComun, { foreignKey: "id_especie" });
+   Especie.associate = function(models) {
+     Especie.hasMany(models.ViajeComun, { foreignKey: "id_especie" });
    };
  
-   return Especies;
+   return Especie;
  };
  

@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
-   const Camiones = sequelize.define(
-     "Camiones",
+   const Camion = sequelize.define(
+     "Camion",
      {
        id: {
          type: DataTypes.INTEGER,
@@ -14,13 +14,6 @@ export default (sequelize, DataTypes) => {
        dominio: {
          type: DataTypes.STRING,
          allowNull: false
-       },
-       id_tipo_camion: {
-         type: DataTypes.INTEGER,
-         allowNull: false
-       },
-       created_at: {
-         type: DataTypes.DATE
        }
      },
      {
@@ -28,12 +21,11 @@ export default (sequelize, DataTypes) => {
      }
    );
  
-   Camiones.associate = function(models) {
-     Camiones.belongsTo(models.Transportista, { foreignKey: "id_transportista", as: 'transportista' });
-     Camiones.belongsTo(models.TipoCamion, { foreignKey: "id_tipo_camion", as: 'tipo_camion' });
-     Camiones.hasMany(models.ViajeComun, { foreignKey: "id_camion", as: 'camion' });
+   Camion.associate = function(models) {
+    Camion.belongsTo(models.Transportista, { foreignKey: "id_transportista", as: 'transportista' });
+    Camion.hasMany(models.ViajeComun, { foreignKey: "id_camion", as: 'camion' });
    };
  
-   return Camiones;
+   return Camion;
  };
  

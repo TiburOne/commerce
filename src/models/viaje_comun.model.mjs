@@ -23,13 +23,17 @@ export default (sequelize, DataTypes) => {
          type: DataTypes.INTEGER,
          allowNull: false
        },
-       id_tipo_camion: {
+       id_tipo_acoplado: {
          type: DataTypes.INTEGER,
          allowNull: false
        },
        id_camion: {
          type: DataTypes.INTEGER,
          allowNull: false
+       },
+       id_acoplado:{
+        type: DataTypes.INTEGER,
+        allowNull: false
        },
        id_carta_porte: {
          type: DataTypes.INTEGER,
@@ -42,11 +46,11 @@ export default (sequelize, DataTypes) => {
    );
  
    ViajeComun.associate = function(models) {
-     ViajeComun.belongsTo(models.Camiones, { foreignKey: "id_camion" });
-     ViajeComun.belongsTo(models.TipoCamion, { foreignKey: "id_tipo_camion" });
-     ViajeComun.belongsTo(models.Especies, { foreignKey: "id_especie" });
-     ViajeComun.belongsTo(models.EstadosViajes, { foreignKey: "id_estado" });
-     ViajeComun.belongsTo(models.CartaDePortes, { foreignKey: "id_carta_porte" });
+     ViajeComun.belongsTo(models.Camion, { foreignKey: "id_camion" });
+     ViajeComun.belongsTo(models.TipoAcoplado, { foreignKey: "id_tipo_acoplado" });
+     ViajeComun.belongsTo(models.Especie, { foreignKey: "id_especie" });
+     ViajeComun.belongsTo(models.EstadoViaje, { foreignKey: "id_estado" });
+     ViajeComun.belongsTo(models.CartaDePorte, { foreignKey: "id_carta_porte" });
    };
  
    return ViajeComun;

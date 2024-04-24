@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
-   const CartaDePortes = sequelize.define(
-     "CartaDePortes",
+   const CartaDePorte = sequelize.define(
+     "CartaDePorte",
      {
        id: {
          type: DataTypes.INTEGER,
@@ -61,10 +61,10 @@ export default (sequelize, DataTypes) => {
      }
    );
  
-   CartaDePortes.associate = function(models) {
-     CartaDePortes.hasMany(models.ViajeComun, { foreignKey: "id_carta_porte" });
+   CartaDePorte.associate = function(models) {
+    CartaDePorte.hasMany(models.ViajeComun, { foreignKey: "id_carta_porte" });
    };
  
-   return CartaDePortes;
+   return CartaDePorte;
  };
  

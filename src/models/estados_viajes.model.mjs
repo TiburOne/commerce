@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
-   const EstadosViajes = sequelize.define(
-     "EstadosViajes",
+   const EstadoViaje = sequelize.define(
+     "EstadoViaje",
      {
        id: {
          type: DataTypes.INTEGER,
@@ -17,10 +17,10 @@ export default (sequelize, DataTypes) => {
      }
    );
  
-   EstadosViajes.associate = function(models) {
-     EstadosViajes.hasMany(models.ViajeComun, { foreignKey: "id_estado" });
+   EstadoViaje.associate = function(models) {
+     EstadoViaje.hasMany(models.ViajeComun, { foreignKey: "id_estado" });
    };
  
-   return EstadosViajes;
+   return EstadoViaje;
  };
  

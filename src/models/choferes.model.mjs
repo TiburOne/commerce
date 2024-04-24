@@ -1,6 +1,6 @@
 export default (sequelize, DataTypes) => {
-   const Choferes = sequelize.define(
-     "Choferes",
+   const Chofer = sequelize.define(
+     "Chofer",
      {
        id: {
          type: DataTypes.INTEGER,
@@ -33,10 +33,10 @@ export default (sequelize, DataTypes) => {
      }
    );
  
-   Choferes.associate = function(models) {
-     Choferes.belongsTo(models.Transportista, { foreignKey: "id_transportista" });
+   Chofer.associate = function(models) {
+    Chofer.belongsTo(models.Transportista, { foreignKey: "id_transportista" });
    };
  
-   return Choferes;
+   return Chofer;
  };
  

@@ -33,8 +33,8 @@ export default (sequelize, DataTypes) => {
    );
  
    Transportista.associate = function(models) {
-     Transportista.hasMany(models.Camiones, { foreignKey: "id_transportista",  });
-     Transportista.hasMany(models.Choferes, { foreignKey: "id_transportista",  });
+     Transportista.hasMany(models.Camion, { foreignKey: "id_transportista",  });
+     Transportista.hasMany(models.Chofer, { foreignKey: "id_transportista",  });
    };
  
    return Transportista;
