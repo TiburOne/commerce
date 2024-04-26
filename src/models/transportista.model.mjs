@@ -8,7 +8,7 @@ export default (sequelize, DataTypes) => {
          autoIncrement: true
        },
        cuit: {
-         type: DataTypes.INTEGER
+         type: DataTypes.BIGINT
        },
        nombre: {
          type: DataTypes.STRING,
@@ -33,8 +33,9 @@ export default (sequelize, DataTypes) => {
    );
  
    Transportista.associate = function(models) {
-     Transportista.hasMany(models.Camion, { foreignKey: "id_transportista",  });
-     Transportista.hasMany(models.Chofer, { foreignKey: "id_transportista",  });
+     Transportista.hasMany(models.Camion, { foreignKey: "id_transportista", as:"Camiones"});
+     Transportista.hasMany(models.Acoplado, { foreignKey: "id_transportista", as:"Acoplados"});
+     Transportista.hasMany(models.Chofer, { foreignKey: "id_transportista", as:"Transportistas" });
    };
  
    return Transportista;

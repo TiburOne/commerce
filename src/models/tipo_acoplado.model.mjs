@@ -18,8 +18,8 @@ export default (sequelize, DataTypes) => {
   );
 
   TipoAcoplado.associate = function (models) {
-    TipoAcoplado.hasMany(models.Acoplado, { foreignKey: "id_tipo_acoplado" });
-    TipoAcoplado.hasMany(models.ViajeComun, { foreignKey: "id_tipo_acoplado" });
+    TipoAcoplado.hasMany(models.Acoplado, { foreignKey: "id_tipo_acoplado", as: "Acoplados" });
+    TipoAcoplado.hasMany(models.ViajeComun, { foreignKey: "id_tipo_acoplado", as:"Viajes_Comunes"});
   };
 
   return TipoAcoplado;

@@ -13,14 +13,16 @@ import { fileURLToPath } from 'url';
 
 const app = express();
 const port = 4000;
-
-const __dirname = dirname(fileURLToPath(import.meta.url)); // Obtiene __dirname en ES6
-const routesDirectory = join(__dirname, 'src/routes');
-
 // Habilitar CORS para todos los orígenes
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.get('/', (req, res) => {
+  res.send('Bienvenido a la API de transporte!!!');
+});
+
+const __dirname = dirname(fileURLToPath(import.meta.url)); // Obtiene __dirname en ES6
+const routesDirectory = join(__dirname, 'src/routes');
 
 // app.use('/categorias', categoriaRoutes);
 // app.use('/productos', productoRoutes);
@@ -28,7 +30,11 @@ app.use(express.urlencoded({ extended: true }));
 await cargarRutas(routesDirectory);
 
 // Sincroniza la base de datos y luego inicia el servidors
-db.sequelize.sync({ force: true}).then(() => {
+db.sequelize.sync(
+  { 
+    //force: true
+  }
+).then(() => {
    app.listen(port, () => {
      console.log(`Listening on port ${port}`);
    });
@@ -42,8 +48,8 @@ db.sequelize.sync({ force: true}).then(() => {
       if (file.endsWith('.mjs')) {
         const filePath = join(dir, file);
         const route = await import(`file://${filePath}`);
-        const routePath = `/${file.replace('.route.mjs', '')}`;
-        app.use(routePath, route.default);
+        const routePath = `/api/${file.replace('.route.mjs', '')}`;
+        app.use( routePath, route.default);
       }
     }
   } catch (err) {
