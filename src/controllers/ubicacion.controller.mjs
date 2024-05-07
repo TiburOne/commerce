@@ -1,9 +1,12 @@
 import db from "./../models/loader.mjs"; // Asegúrate de ajustar la ruta al archivo loader
 import { crudControllerFactory } from "./crudControllerFactory.mjs";
 
-const { EstadosViajes } = db;
-
 // Usar la fábrica para crear las funciones CRUD básicas
-const EstadosViajesController = crudControllerFactory(db.EstadoViaje);
+let UbicacionController = crudControllerFactory(db.Ubicacion);
 
-export { EstadosViajesController};
+UbicacionController = {
+   ...UbicacionController,
+}
+
+
+export { UbicacionController }

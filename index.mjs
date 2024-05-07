@@ -33,6 +33,7 @@ await cargarRutas(routesDirectory);
 db.sequelize.sync(
   { 
     //force: true
+    alter: true,
   }
 ).then(() => {
    app.listen(port, () => {

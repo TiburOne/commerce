@@ -11,6 +11,9 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
+      cantidad_ejes: {
+        type: DataTypes.INTEGER
+      }
     },
     {
       tableName: "Tipos_Aclopados",

@@ -11,21 +11,14 @@ export default (sequelize, DataTypes) => {
          type: DataTypes.INTEGER,
          allowNull: false
        },
-       title: {
+       nombre: {
          type: DataTypes.STRING
        },
-       body: {
-         type: DataTypes.TEXT,
-         comment: 'Content of the post'
+       apellido: {
+        type: DataTypes.STRING
        },
-       user_id: {
-         type: DataTypes.INTEGER
-       },
-       status: {
-         type: DataTypes.STRING
-       },
-       created_at: {
-         type: DataTypes.DATE
+       telefono:{
+        type: DataTypes.STRING
        }
      },
      {
