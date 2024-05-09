@@ -2,11 +2,11 @@ export default (sequelize, DataTypes) => {
    const Ubicacion = sequelize.define(
      "Ubicacion",
      {
-       id: {
-         type: DataTypes.INTEGER,
-         primaryKey: true,
-         autoIncrement: true
-       },
+      id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
+      },
        latitud: {
          type: DataTypes.DOUBLE,
          allowNull: false
@@ -27,7 +27,11 @@ export default (sequelize, DataTypes) => {
        provincia: {
          type: DataTypes.STRING,
          allowNull: false
-       }
+       },
+       direccion: {
+        type: DataTypes.STRING,
+        allowNull: true
+      }
      },
      {
        tableName: "Ubicaciones"

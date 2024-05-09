@@ -3,7 +3,8 @@
 export const crudControllerFactory = (Model) => ({
    crear: async (req, res) => {
        try {
-           const item = await Model.create(req.body);
+           const { id, ...dataSinId } = req.body; // Desestructura y elimina `id` del cuerpo
+           const item = await Model.create(dataSinId);
            res.status(201).send(item);
        } catch (error) {
            res.status(400).send(error);
@@ -30,7 +31,8 @@ export const crudControllerFactory = (Model) => ({
    },
    actualizar: async (req, res) => {
        try {
-           const [updated] = await Model.update(req.body, { where: { id: req.params.id } });
+            const { id, ...dataSinId } = req.body; // Desestructura y elimina `id` del cuerpo 
+           const [updated] = await Model.update(dataSinId, { where: { id: req.params.id } });
            if (updated) {
                const updatedItem = await Model.findByPk(req.params.id);
                res.status(200).send(updatedItem);

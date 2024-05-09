@@ -7,29 +7,21 @@ export default (sequelize, DataTypes) => {
         primaryKey: true,
         autoIncrement: true
       },
-      origen: {
-        type: DataTypes.STRING,
-        allowNull: false
+      id_ubicacion_origen: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Ubicaciones',
+          key: 'id'
+        }
       },
-      latitud_origen: {
-        type: DataTypes.DOUBLE,
-        allowNull: false
-      },
-      longitud_origen: {
-        type: DataTypes.DOUBLE,
-        allowNull: false
-      },
-      destino: {
-        type: DataTypes.STRING,
-        allowNull: false
-      },
-      latitud_destino: {
-        type: DataTypes.DOUBLE,
-        allowNull: false
-      },
-      longitud_destino: {
-        type: DataTypes.DOUBLE,
-        allowNull: false
+      id_ubicacion_destino: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: 'Ubicaciones',
+          key: 'id'
+        }
       },
       id_especie: {
         type: DataTypes.INTEGER,
@@ -49,29 +41,19 @@ export default (sequelize, DataTypes) => {
       },
       id_camion: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
-      id_acoplado:{
+      id_acoplado: {
        type: DataTypes.INTEGER,
-       allowNull: false
+       allowNull: true
       },
       id_carta_porte: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
       },
-      id_ubicacion_origen: {
+      id_chofer: {
         type: DataTypes.INTEGER,
-        references: {
-          model: 'Ubicaciones',
-          key: 'id'
-        }
-      },
-      id_ubicacion_destino: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: 'Ubicaciones',
-          key: 'id'
-        }
+        allowNull: true, // Chofer puede ser nulo
       }
     },
     {
@@ -85,8 +67,9 @@ export default (sequelize, DataTypes) => {
     ViajeComun.belongsTo(models.Especie, { foreignKey: "id_especie" });
     ViajeComun.belongsTo(models.EstadoViaje, { foreignKey: "id_estado" });
     ViajeComun.belongsTo(models.CartaDePorte, { foreignKey: "id_carta_porte" });
-    ViajeComun.belongsTo(models.Ubicacion, { foreignKey: 'id_ubicacion_origen', as: 'UbicacionOrigen' });
-    ViajeComun.belongsTo(models.Ubicacion, { foreignKey: 'id_ubicacion_destino', as: 'UbicacionDestino' });
+    ViajeComun.belongsTo(models.Ubicacion, { foreignKey: 'id_ubicacion_origen', as: 'Origen' });
+    ViajeComun.belongsTo(models.Ubicacion, { foreignKey: 'id_ubicacion_destino', as: 'Destino' });
+    ViajeComun.belongsTo(models.Chofer, { foreignKey: 'id_chofer', as: 'Chofer' });  // Asociación con Choferes
   };
 
   return ViajeComun;

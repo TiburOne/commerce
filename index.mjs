@@ -32,8 +32,8 @@ await cargarRutas(routesDirectory);
 // Sincroniza la base de datos y luego inicia el servidors
 db.sequelize.sync(
   { 
-    //force: true
-    alter: true,
+    force: true
+    //alter: true,
   }
 ).then(() => {
    app.listen(port, () => {
