@@ -1,47 +1,86 @@
 import viaje_comunModel from "../models/viaje_comun.model.mjs";
 import db from "./../models/loader.mjs"; // Asegúrate de ajustar la ruta al archivo loader
 import { crudControllerFactory } from "./crudControllerFactory.mjs";
+import { sendMessage } from "./../../whatsappService.mjs"; // Asegúrate de que la ruta sea correcta
+import TransportistaController from "./transportista.controller.mjs"; // Importa el controlador de Transportista
 
 // Usar la fábrica para crear las funciones CRUD básicas
 let ViajeComunController = crudControllerFactory(db.ViajeComun);
 
 ViajeComunController.crear = async (req, res) => {
-   const t = await db.sequelize.transaction(); // Inicia una transacción
-   try {
-       const { cantidad, TiposAcoplados, ...dataSinTiposAcoplados } = req.body;
+  const t = await db.sequelize.transaction(); // Inicia una transacción
+  try {
+    const { cantidad, TiposAcoplados, ...dataSinTiposAcoplados } = req.body;
 
-       // Crear el primer ViajeComun sin id_creador
-       const primerViaje = await db.ViajeComun.create(dataSinTiposAcoplados, { transaction: t });
+    // Crear el primer ViajeComun sin id_creador
+    const primerViaje = await db.ViajeComun.create(dataSinTiposAcoplados, {
+      transaction: t,
+    });
 
-       // Asociar TiposAcoplados si existen
-       if (TiposAcoplados && TiposAcoplados.length) {
-           await primerViaje.setTiposAcoplados(TiposAcoplados, { transaction: t });
-       }
+    await primerViaje.reload({
+      include: [
+        { model: db.Ubicacion, as: "Origen" },
+        { model: db.Ubicacion, as: "Destino" },
+        { model: db.Especie },
+      ],
+      transaction: t,
+    });
 
-       const viajesCreados = [primerViaje];
+    // Asociar TiposAcoplados si existen
+    if (TiposAcoplados && TiposAcoplados.length) {
+      await primerViaje.setTiposAcoplados(TiposAcoplados, { transaction: t });
+    }
 
-       // Crear los viajes restantes con id_creador
-       for (let i = 1; i < cantidad; i++) {
-           const viajeComun = await db.ViajeComun.create({
-               ...dataSinTiposAcoplados,
-               id_creador: primerViaje.id,  // Establecer id_creador al id del primer viaje creado
-           }, { transaction: t });
+    const viajesCreados = [primerViaje];
 
-           if (TiposAcoplados && TiposAcoplados.length) {
-               await viajeComun.setTiposAcoplados(TiposAcoplados, { transaction: t });
-           }
+    // Crear los viajes restantes con id_creador
+    for (let i = 1; i < cantidad; i++) {
+      const viajeComun = await db.ViajeComun.create(
+        {
+          ...dataSinTiposAcoplados,
+          id_creador: primerViaje.id, // Establecer id_creador al id del primer viaje creado
+        },
+        { transaction: t }
+      );
 
-           viajesCreados.push(viajeComun);
-       }
+      if (TiposAcoplados && TiposAcoplados.length) {
+        await viajeComun.setTiposAcoplados(TiposAcoplados, { transaction: t });
+      }
 
-       await t.commit(); // Commit de la transacción si todo va bien
-       res.status(201).send(viajesCreados);
-   } catch (error) {
-       await t.rollback(); // Rollback de la transacción en caso de error
-       res.status(400).send(error);
-   }
+      viajesCreados.push(viajeComun);
+    }
+
+    // Enviar mensaje a todos los transportistas
+    const transportistas = await db.Transportista.findAll({
+      attributes: ["telefono"], // Solo recuperar el teléfono para enviar mensajes
+    });
+
+    const message = `
+         Nuevo viaje disponible:
+         Origen: ${primerViaje.Origen.direccion}
+         Destino: ${primerViaje.Destino.direccion}
+         Especie: ${primerViaje.Especie.nombre}
+         Tarifa: ${primerViaje.valor_tarifa}`;
+
+    transportistas.forEach((transportista) => {
+      if (transportista.telefono) {
+        sendMessage(transportista.telefono, message).catch((error) => {
+          console.error(
+            `Failed to send message to ${transportista.telefono}`,
+            error
+          );
+        });
+      }
+    });
+
+    await t.commit(); // Commit de la transacción si todo va bien
+
+    res.status(201).send(viajesCreados);
+  } catch (error) {
+    await t.rollback(); // Rollback de la transacción en caso de error
+    res.status(400).send(error);
+  }
 };
-
 
 //sobreescritura del metodo para incluir las relaciones
 ViajeComunController.listarTodos = async (req, res) => {
@@ -51,7 +90,7 @@ ViajeComunController.listarTodos = async (req, res) => {
         { model: db.Ubicacion, as: "Origen" },
         { model: db.Ubicacion, as: "Destino" },
         { model: db.Especie },
-        { model: db.TipoAcoplado, as: "TiposAcoplados"},
+        { model: db.TipoAcoplado, as: "TiposAcoplados" },
         { model: db.EstadoViaje },
       ],
     });
