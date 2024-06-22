@@ -1,9 +1,8 @@
-// crudControllerFactory.mjs
 
 export const crudControllerFactory = (Model) => ({
    crear: async (req, res) => {
        try {
-           const { id, ...dataSinId } = req.body; // Desestructura y elimina `id` del cuerpo
+           const { id, ...dataSinId } = req.body; 
            const item = await Model.create(dataSinId);
            res.status(201).send(item);
        } catch (error) {

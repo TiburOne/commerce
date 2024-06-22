@@ -13,5 +13,8 @@ router.delete('/:id', camionesController.eliminar);
 // Rutas adicionales específicas para los camiones
 router.get('/detalle/:id', camionesController.obtenerCamion);
 router.get('/con-viajes', camionesController.listarCamionesConViajes);
+// Ruta para obtener los camiones por id_transportista
+router.get('/transportista/:id_transportista', camionesController.obtenerPorIdTransportista);
+
 
 export default router;

@@ -71,7 +71,7 @@ export default (sequelize, DataTypes) => {
 
   ViajeComun.associate = function (models) {
     ViajeComun.belongsTo(models.Camion, { foreignKey: "id_camion" });
-    // Asociación con TipoAcoplado
+    // Asociación con TipoAcoplado. Un viaje puede realizarse con mas de un tipo de acoplado.
     ViajeComun.belongsToMany(models.TipoAcoplado, {
       through: "Viajes_TipoAcoplados",
       foreignKey: "idViaje",
