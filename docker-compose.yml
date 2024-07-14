@@ -1,0 +1,18 @@
+version: '3'
+services:
+  app:
+    build: .
+    environment:
+      NODE_ENV: production
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      DB_HOST: ${DB_HOST}
+      DB_DIALECT: ${DB_DIALECT}
+      DB_PORT: ${DB_PORT}
+      DB_LOGGING: ${DB_LOGGING}
+      DB_SSL: ${DB_SSL}
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env

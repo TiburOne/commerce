@@ -5,16 +5,31 @@ import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const qrcode = require('qrcode');
 
-const client = new Client({
-   authStrategy: new LocalAuth({
-   dataPath: "sessions",
-   }),
-   webVersionCache: {
-   type: 'remote',
-   remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html',
-   }
-});
+// const client = new Client({
+//    authStrategy: new LocalAuth({
+//    dataPath: "sessions",
+//    }),
+//    webVersionCache: {
+//    type: 'remote',
+//    remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2412.54.html',
+//    }
+// });
 
+const client = new Client({
+    authStrategy: new LocalAuth({
+        dataPath: "sessions",
+    }),
+    webVersionCache: {
+        type: 'remote',
+        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2413.51.html',
+   },
+    // proxyAuthentication: { username: 'username', password: 'password' },
+    puppeteer: {
+        //executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
+        executablePath: '/usr/bin/chromium-browser',
+        headless: true , args: ['--no-sandbox', '--disable-setuid-sandbox'],
+      },
+});
 let isClientReady = false;
 
 export function initializeWhatsApp(io) {

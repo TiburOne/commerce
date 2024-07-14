@@ -3,6 +3,7 @@ import db from "./../models/loader.mjs"; // Asegúrate de ajustar la ruta al arc
 import { crudControllerFactory } from "./crudControllerFactory.mjs";
 import { sendMessage } from "./../../whatsappService.mjs"; // Asegúrate de que la ruta sea correcta
 import TransportistaController from "./transportista.controller.mjs"; // Importa el controlador de Transportista
+import { enviarMensajesTransportistas } from '../utils/utils/messageUtils.mjs';
 
 // Usar la fábrica para crear las funciones CRUD básicas
 let ViajeComunController = crudControllerFactory(db.ViajeComun);
@@ -52,31 +53,11 @@ ViajeComunController.crear = async (req, res) => {
 
       viajesCreados.push(viajeComun);
     }
-
-    // Enviar mensaje a todos los transportistas
-    const transportistas = await db.Transportista.findAll({
-      attributes: ["telefono"], // Solo recuperar el teléfono para enviar mensajes
-    });
-
-    const message = `
-         Nuevo viaje disponible:
-         Origen: ${primerViaje.Origen.ciudad} - ${primerViaje.Origen.direccion}
-         Destino: ${primerViaje.Destino.ciudad} - ${primerViaje.Destino.direccion}
-         Especie: ${primerViaje.Especie.nombre}
-         Tarifa: ${primerViaje.valor_tarifa}`;
-
-    transportistas.forEach((transportista) => {
-      if (transportista.telefono) {
-        sendMessage(transportista.telefono, message).catch((error) => {
-          console.error(
-            `Failed to send message to ${transportista.telefono}`,
-            error
-          );
-        });
-      }
-    });
-
+    
     await t.commit(); // Commit de la transacción si todo va bien
+
+    // Llamar a la función para enviar mensajes de manera asíncrona
+    enviarMensajesTransportistas(primerViaje);
 
     res.status(201).send(viajesCreados);
   } catch (error) {
@@ -146,6 +127,44 @@ ViajeComunController.listarPendientes = async (req, res) => {
   }
 };
 
+ViajeComunController.listarViajes = async (req, res) => {
+  try {
+    const { page = 1, pageSize = 10, id_estado } = req.query;
+    const offset = (page - 1) * pageSize;
+    const limit = parseInt(pageSize);
+
+    // Construir el objeto de condiciones 'where'
+    let whereConditions = {};
+    if (id_estado) {
+      // Si id_estado está presente, convertirlo en un arreglo si no lo es
+      const estados = Array.isArray(id_estado) ? id_estado : [id_estado];
+      whereConditions.id_estado = estados;
+    }
+
+    const items = await db.ViajeComun.findAndCountAll({
+      where: whereConditions,
+      include: [
+        { model: db.Ubicacion, as: "Origen" },
+        { model: db.Ubicacion, as: "Destino" },
+        { model: db.Especie },
+        { model: db.TipoAcoplado, as: "TiposAcoplados" },
+        { model: db.EstadoViaje },
+      ],
+      offset,
+      limit,
+    });
+
+    res.status(200).send({
+      data: items.rows,
+      total: items.count,
+      page: parseInt(page),
+      pageSize: limit,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
+
 ViajeComunController.obtenerPorId = async (req, res) => {
   try {
     const item = await db.ViajeComun.findByPk(req.params.id, {
@@ -166,59 +185,39 @@ ViajeComunController.obtenerPorId = async (req, res) => {
 };
 
 ViajeComunController.tomarViaje = async (req, res) => {
-  const { viajeId, transportistaId, choferId, camionId, acopladoId } = req.body;
+  const { viajeId, choferId, camionId, acopladoId } = req.body;
 
   const t = await db.sequelize.transaction(); // Inicia una transacción
 
   try {
-    // Validar la existencia del transportista
-    const transportista = await db.Transportista.findByPk(transportistaId, { transaction: t });
-    if (!transportista) {
-      return res.status(404).send({ message: 'Transportista no encontrado' });
-    }
-
-    // Validar la existencia del chofer y que pertenezca al transportista
-    const chofer = await db.Chofer.findOne({
-      where: { id: choferId, id_transportista: transportistaId },
-      transaction: t,
-    });
-    if (!chofer) {
-      return res.status(404).send({ message: 'Chofer no encontrado o no pertenece al transportista' });
-    }
-
-    // Validar la existencia del camión y que pertenezca al transportista
-    const camion = await db.Camion.findOne({
-      where: { id: camionId, id_transportista: transportistaId },
-      transaction: t,
-    });
-    if (!camion) {
-      return res.status(404).send({ message: 'Camión no encontrado o no pertenece al transportista' });
-    }
-
-    // Validar la existencia del acoplado y que pertenezca al transportista
-    const acoplado = await db.Acoplado.findOne({
-      where: { id: acopladoId, id_transportista: transportistaId },
-      transaction: t,
-    });
-    if (!acoplado) {
-      return res.status(404).send({ message: 'Acoplado no encontrado o no pertenece al transportista' });
-    }
-
-    // Validar que el viaje no esté tomado por otro transportista
+    // Encontrar el viaje por ID
     const viaje = await db.ViajeComun.findByPk(viajeId, { transaction: t });
     if (!viaje) {
       return res.status(404).send({ message: 'Viaje no encontrado' });
     }
+
+    // Si el viaje ya está tomado, buscar otro viaje disponible con el mismo id_creador
+    let viajeDisponible = viaje;
     if (viaje.id_chofer) {
-      return res.status(400).send({ message: 'El viaje ya ha sido tomado por otro transportista' });
+      viajeDisponible = await db.ViajeComun.findOne({
+        where: {
+          id_creador: viaje.id_creador || viaje.id,
+          id_chofer: null
+        },
+        transaction: t,
+      });
+
+      if (!viajeDisponible) {
+        return res.status(400).send({ message: 'No hay viajes disponibles para el id_creador especificado' });
+      }
     }
 
     // Actualizar el viaje con los detalles del chofer, camión y acoplado
-    await viaje.update(
+    await viajeDisponible.update(
       {
-        id_chofer: chofer.id,
-        id_camion: camion.id,
-        id_acoplado: acoplado.id,
+        id_chofer: choferId,
+        id_camion: camionId,
+        id_acoplado: acopladoId,
         id_estado: 2, // Asume que 2 es el estado de "tomado" o "en progreso"
       },
       { transaction: t }
@@ -226,12 +225,45 @@ ViajeComunController.tomarViaje = async (req, res) => {
 
     await t.commit(); // Commit de la transacción si todo va bien
 
-    res.status(200).send({ message: 'Viaje tomado exitosamente' });
+    res.status(200).send({ message: 'Viaje tomado exitosamente', viaje: viajeDisponible });
   } catch (error) {
     await t.rollback(); // Rollback de la transacción en caso de error
     res.status(400).send(error);
   }
 };
+
+ViajeComunController.reenviarMensajes = async (req, res) => {
+  const { id_viaje } = req.body;
+
+  try {
+    // Buscar el primer viaje relacionado por el id_viaje proporcionado
+    const viaje = await db.ViajeComun.findOne({
+      where: {
+        [db.Sequelize.Op.or]: [
+          { id: id_viaje },
+          { id_creador: id_viaje }
+        ]
+      },
+      include: [
+        { model: db.Ubicacion, as: "Origen" },
+        { model: db.Ubicacion, as: "Destino" },
+        { model: db.Especie }
+      ]
+    });
+
+    if (!viaje) {
+      return res.status(404).send({ message: 'Viaje no encontrado' });
+    }
+
+    // Llamar a la función para enviar mensajes
+    enviarMensajesTransportistas(viaje);
+
+    res.status(200).send({ message: 'Mensajes reenviados exitosamente' });
+  } catch (error) {
+    res.status(400).send({ message: 'Error al reenviar mensajes', error });
+  }
+};
+
 
 
 ViajeComunController = {

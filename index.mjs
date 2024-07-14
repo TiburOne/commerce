@@ -15,7 +15,7 @@ import { fileURLToPath } from "url";
 const app = express();
 app.use(cors());
 
-const port = 4000;
+const port = 3000;
 // Habilitar CORS para todos los orígenes
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
