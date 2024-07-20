@@ -9,7 +9,9 @@ RUN apk update && apk upgrade && \
     freetype \
     harfbuzz \
     ca-certificates \
-    ttf-freefont
+    ttf-freefont \
+    nodejs \
+    npm
 
 # Establece el directorio de trabajo en el contenedor
 WORKDIR /usr/src/app

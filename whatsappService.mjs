@@ -27,7 +27,17 @@ const client = new Client({
     puppeteer: {
         //executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
         executablePath: '/usr/bin/chromium-browser',
-        headless: true , args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        headless: true , 
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process', // <- this one doesn't works in Windows
+            '--disable-gpu'
+        ],
       },
 });
 let isClientReady = false;
