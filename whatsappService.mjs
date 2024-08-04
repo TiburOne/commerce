@@ -26,7 +26,8 @@ const client = new Client({
     // proxyAuthentication: { username: 'username', password: 'password' },
     puppeteer: {
         //executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium-browser',
-        executablePath: '/usr/bin/chromium-browser',
+        //executablePath: '/usr/bin/chromium-browser',
+        executablePath: '/usr/bin/google-chrome',
         headless: true , 
         args: [
             '--no-sandbox',
@@ -77,6 +78,7 @@ export async function sendMessage(phoneNumber, textMessage) {
                    console.log(`Message sent to ${phoneNumber}: ${message.body}`);
                    resolve(message);
                } catch (error) {
+                   console.error(error);  
                    reject(error);
                }
            } else {
