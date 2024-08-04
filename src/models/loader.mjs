@@ -21,6 +21,8 @@ const configFile = JSON.parse(configRaw)[env];
 // Configuración de Sequelize desde variables de entorno o config.json
 let sequelize;
 if (process.env.DB_NAME && process.env.DB_USER && process.env.DB_PASS && process.env.DB_HOST) {
+  console.log("VARIABLES DE CONFIGURACION => ");
+  console.log(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASS, process.env);
   sequelize = new Sequelize(
     process.env.DB_NAME,
     process.env.DB_USER,
@@ -39,6 +41,7 @@ if (process.env.DB_NAME && process.env.DB_USER && process.env.DB_PASS && process
     }
   );
 } else {
+  console.log("SIN VARIABLES DE CONFIGURACION");
   sequelize = new Sequelize(configFile.database, configFile.username, configFile.password, configFile);
 }
 
