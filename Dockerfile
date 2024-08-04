@@ -26,6 +26,9 @@ COPY . .
 # Establecer la variable de entorno para Puppeteer con la ruta de Google Chrome
 ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
+# Establecer la variable de entorno para Node.js
+ENV NODE_ENV=production
+
 # Exponer el puerto en el que la aplicación escuchará
 EXPOSE 3000
 
