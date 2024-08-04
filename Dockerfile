@@ -1,7 +1,7 @@
-# Usa una imagen base de Node.js con Alpine Linux
-FROM node:20.13.1-alpine
+# Usa una imagen base de Node.js con Debian (en lugar de Alpine) para apt-get
+FROM node:20.13.1
 
-# Instala las dependencias necesarias para Puppeteer y Chromium
+# Instala las dependencias necesarias para Puppeteer y Google Chrome
 RUN apt-get update \
     && apt-get install -y wget gnupg \
     && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | gpg --dearmor -o /usr/share/keyrings/googlechrome-linux-keyring.gpg \
@@ -23,11 +23,8 @@ RUN npm install
 # Copia el resto de los archivos del proyecto al directorio de trabajo
 COPY . .
 
-# Copiar el archivo .env al contenedor
-COPY .env .env
-
-# Establecer la variable de entorno para Puppeteer
-ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
+# Establecer la variable de entorno para Puppeteer con la ruta de Google Chrome
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
 # Exponer el puerto en el que la aplicación escuchará
 EXPOSE 3000

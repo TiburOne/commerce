@@ -1,10 +1,9 @@
 name: Docker Image CI
 
-# Define cuándo se debe ejecutar el workflow
 on:
   push:
     branches:
-      - transporte  # Cambia esto a la rama que desees
+      - main  # Cambia esto a la rama que desees usar
 
 jobs:
   build-and-push:
@@ -30,6 +29,15 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: .  # Contexto del build, usualmente el directorio raíz
-          push: true  # Permitir que la imagen se publique en Docker Hub
+          context: .
+          push: true
           tags: ${{ secrets.DOCKER_USERNAME }}/commerce-app:latest
+          build-args:  # Pasar variables de entorno como argumentos de construcción
+            DB_NAME: ${{ secrets.DB_NAME }}
+            DB_USER: ${{ secrets.DB_USER }}
+            DB_PASS: ${{ secrets.DB_PASS }}
+            DB_HOST: ${{ secrets.DB_HOST }}
+            DB_DIALECT: ${{ secrets.DB_DIALECT }}
+            DB_PORT: ${{ secrets.DB_PORT }}
+            DB_LOGGING: ${{ secrets.DB_LOGGING }}
+            DB_SSL: ${{ secrets.DB_SSL }}
