@@ -32,12 +32,12 @@ jobs:
           context: .  # Directorio actual como contexto de construcción
           push: true  # Permitir que la imagen se publique en Docker Hub
           tags: ${{ secrets.DOCKER_USERNAME }}/commerce-app:latest
-          build-args:  # Pasar variables de entorno como argumentos de construcción
-            -DB_NAME= ${{ secrets.DB_NAME }}
-            -DB_USER= ${{ secrets.DB_USER }}
-            -DB_PASS= ${{ secrets.DB_PASS }}
-            -DB_HOST= ${{ secrets.DB_HOST }}
-            -DB_DIALECT= ${{ secrets.DB_DIALECT }}
-            -DB_PORT= ${{ secrets.DB_PORT }}
-            -DB_LOGGING= ${{ secrets.DB_LOGGING }}
-            -DB_SSL= ${{ secrets.DB_SSL }}
+          build-args: |  # Usa pipe (|) para múltiples líneas de argumentos
+            DB_NAME=${{ secrets.DB_NAME }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASS=${{ secrets.DB_PASS }}
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_DIALECT=${{ secrets.DB_DIALECT }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            DB_LOGGING=${{ secrets.DB_LOGGING }}
+            DB_SSL=${{ secrets.DB_SSL }}
