@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - transporte  # Cambia esto a la rama que desees usar
+      - transporte  # Cambia esto a la rama que desees usar
 
 jobs:
   build-and-push:
